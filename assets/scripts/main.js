@@ -12,6 +12,9 @@ const recipes = [
 ];
 const recipeData = {} // You can access all of the Recipe Data from the JSON files in this variable
 
+const recipeCardSection = document.querySelector(".section--recipe-cards");
+const recipeExpandSection = document.querySelector(".section--recipe-expand");
+
 const router = new Router(function () {
   /** 
    * TODO - Part 1
@@ -22,6 +25,8 @@ const router = new Router(function () {
    * are removing any "shown" classes on <sections> you don't want to display, this home method should
    * be called more than just at the start. You should only really need two lines for this function.
    */
+  recipeCardSection.classList.add("shown");
+  recipeExpandSection.classList.remove("shown");
 });
 
 window.addEventListener('DOMContentLoaded', init);
@@ -92,6 +97,8 @@ async function fetchRecipes() {
  * appends them to the page
  */
 function createRecipeCards() {
+  const recipeExpandObj = {};
+
   for (let i = 0; i < recipes.length; i++) {
     const recipeCard = document.createElement('recipe-card');
     recipeCard.data = recipeData[recipes[i]];
@@ -111,6 +118,23 @@ function createRecipeCards() {
      */
     if (i >= 3) recipeCard.classList.add('hidden');
     document.querySelector('.recipe-cards--wrapper').appendChild(recipeCard);
+
+    const pageName = recipeData[recipes[i]]['page-name'];
+    bindRecipeCard(recipeCard, pageName);
+
+    recipeExpandObj[pageName] = recipeData[recipes[i]];
+
+    router.addPage(pageName, function () {
+      const recipeExpand = document.createElement('recipe-expand');
+
+      recipeExpand.data = recipeExpandObj[pageName];
+
+      recipeExpandSection.innerHTML = '';
+      recipeExpandSection.append(recipeExpand);
+
+      recipeCardSection.classList.remove("shown");
+      recipeExpandSection.classList.add("shown");
+    });
   }
 }
 
@@ -154,6 +178,9 @@ function bindRecipeCard(recipeCard, pageName) {
    * TODO - Part 1
    * Fill in this function as specified in the comment above
    */
+   recipeCard.onclick = () => {
+    router.navigate(pageName, false);
+  }
 }
 
 /**
@@ -165,6 +192,9 @@ function bindEscKey() {
    * TODO - Part 1
    * Fill in this function as specified in the comment above
    */
+  document.onkeydown = (event) => {
+    if(event.code == 'Escape') router.navigate('home', false);
+  }
 }
 
 /**
@@ -179,4 +209,9 @@ function bindPopstate() {
    * TODO - Part 1
    * Fill in this function as specified in the comment above
    */
+  window.onpopstate = () => {
+    console.log(history.state.page);
+
+    router.navigate(history.state.page, true);
+  }
 }

@@ -13,6 +13,7 @@
   */
 
 export class Router {
+
   /**
    * Sets up the home function, the page name should always be 'home', which
    * is why no page name variable is passed in.
@@ -24,6 +25,8 @@ export class Router {
      * TODO Part 1
      * Fill in this function as specified in the comment above
      */
+    this.pages = {};
+    this.addPage('home', homeFunc);
   }
 
   /**
@@ -38,6 +41,8 @@ export class Router {
      * TODO Part 1
      * Fill in this function as specified in the comment above
      */
+
+    this.pages[page] = {pageFunc: pageFunc};
   }
 
   /**
@@ -52,5 +57,11 @@ export class Router {
      * TODO Part 1
      * Fill in this function as specified in the comment above
      */
+    if(!statePopped) {
+      history.pushState({page: page}, '', window.location);
+    }
+
+    window.location.hash = page;
+    this.pages[page].pageFunc();
   }
 }
