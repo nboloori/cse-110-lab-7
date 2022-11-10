@@ -56,7 +56,7 @@ function initializeServiceWorker() {
   // STEPS B6 ONWARDS WILL BE IN /sw.js
   if('serviceWorker' in navigator) {
     window.onload = () => {
-      navigator.serviceWorker.register('sw.js')
+      navigator.serviceWorker.register('./sw.js')
       .then((registration) => {
         console.log('Service worker registration succeeded: ', registration);
       },
